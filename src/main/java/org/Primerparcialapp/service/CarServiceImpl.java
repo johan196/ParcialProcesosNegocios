@@ -26,7 +26,6 @@ public class CarServiceImpl extends AbstractClient  implements CarService{
     @Override
     public CarResponse create() {
         String uri = baseUrl + "/cars";
-        System.out.println();
         try {
             ResponseEntity<CarResponse> response = restTemplate.getForEntity(uri, CarResponse.class);
             if (response.getStatusCode().is2xxSuccessful()) {
