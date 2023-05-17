@@ -6,10 +6,10 @@ import org.springframework.web.client.RestTemplate;
 
 public abstract class AbstractClient {
 
-    @Value("${cars.base-url}")
+    @Value("${produtos.base-url}")
     protected String baseUrl;
 
-    protected final  RestTemplate restTemplate;
+    protected final RestTemplate restTemplate;
 
     protected AbstractClient(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
