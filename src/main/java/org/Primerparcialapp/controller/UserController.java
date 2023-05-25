@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -23,34 +22,36 @@ public class UserController {
     Map data = new HashMap<>();
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity findUserById(@PathVariable Long id){
+    public ResponseEntity findUserById(@PathVariable Long id) {
         try {
             apiResponse = new ApiResponse(Constants.REGISTER_FOUND, userService.getUser(id));
             return new ResponseEntity(apiResponse, HttpStatus.OK);
-        }catch(Exception e){
-            apiResponse = new ApiResponse(Constants.REGISTER_NOT_FOUND,"");
-            return new ResponseEntity<>(apiResponse,HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            apiResponse = new ApiResponse(Constants.REGISTER_NOT_FOUND, "");
+            return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
         }
     }
+
     @PostMapping()
-    public ResponseEntity saveUser(@RequestBody User user){
+    public ResponseEntity saveUser(@RequestBody User user) {
         Boolean userResp = userService.createUser(user);
 
-        if(userResp == true){
-            apiResponse = new ApiResponse(Constants.REGISTER_CREATED,"");
+        if (userResp) {
+            apiResponse = new ApiResponse(Constants.REGISTER_CREATED, "");
             return new ResponseEntity(apiResponse, HttpStatus.CREATED);
         }
         apiResponse = new ApiResponse(Constants.REGISTER_BAD, user);
-        return new ResponseEntity(apiResponse,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(apiResponse, HttpStatus.BAD_REQUEST);
     }
+
     @GetMapping()
-    public ResponseEntity findAllUser(){
+    public ResponseEntity findAllUser() {
         try {
-            apiResponse = new ApiResponse(Constants.REGISTER_LIST,userService.allUsers());
+            apiResponse = new ApiResponse(Constants.REGISTER_LIST, userService.allUsers());
             return new ResponseEntity(apiResponse, HttpStatus.OK);
-        }catch(Exception e){
-            apiResponse = new ApiResponse(Constants.REGISTER_NOT_FOUND,"");
-            return new ResponseEntity<>(apiResponse,HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            apiResponse = new ApiResponse(Constants.REGISTER_NOT_FOUND, "");
+            return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
         }
     }
 }

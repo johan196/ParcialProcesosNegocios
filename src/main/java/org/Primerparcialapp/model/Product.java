@@ -25,6 +25,7 @@ public class Product {
     @Column(name = "rating")
     private Rating rating;
 
+
     public Long getId() {
         return id;
     }

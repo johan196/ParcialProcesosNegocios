@@ -2,7 +2,6 @@ package org.Primerparcialapp.controller;
 
 import org.Primerparcialapp.model.Product;
 import org.Primerparcialapp.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

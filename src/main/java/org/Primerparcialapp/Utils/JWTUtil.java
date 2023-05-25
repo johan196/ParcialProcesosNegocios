@@ -7,11 +7,16 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -30,6 +35,36 @@ public class JWTUtil {
 
     private final Logger log = LoggerFactory
             .getLogger(JWTUtil.class);
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7); // El token comienza después de "Bearer "
+        }
+        return null;
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key)).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public Authentication getAuthentication(String token) {
+        Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key))
+                .parseClaimsJws(token).getBody();
+
+        String userId = claims.getId();
+        String username = claims.getSubject();
+
+        // Aquí puedes obtener más información del token según tus necesidades
+
+        // Crear un objeto de autenticación y devolverlo
+        return new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
+    }
 
     /**
      * Create a new token.

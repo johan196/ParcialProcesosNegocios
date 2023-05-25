@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User getUser(Long id){
+    public User getUser(Long id) {
         return userRepository.findById(id).get();
     }
 
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService{
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(user);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
 
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService{
             userBD.setPassword(passwordEncoder.encode(user.getPassword()));
             User userUp = userRepository.save(userBD);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
@@ -60,11 +60,11 @@ public class UserServiceImpl implements UserService{
     @Override
     public String login(User user) {
         Optional<User> userBd = userRepository.findByEmail(user.getEmail());
-        if(userBd.isEmpty()){
+        if (userBd.isEmpty()) {
             throw new RuntimeException("Usuario no encontrado!");
         }
 
-        if(!passwordEncoder.matches(user.getPassword(), userBd.get().getPassword())){
+        if (!passwordEncoder.matches(user.getPassword(), userBd.get().getPassword())) {
             throw new RuntimeException("La contraseña es incorrecta!");
         }
         return jwtUtil.create(String.valueOf(userBd.get().getId()),
