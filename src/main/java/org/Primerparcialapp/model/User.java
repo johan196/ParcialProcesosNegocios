@@ -21,7 +21,7 @@ public class User {
     private String name;
     @Column(name = "lastname",length = 50,nullable = false)
     private String lastname;
-    @Column(name = "document",length = 50,nullable = false)
+    @Column(name = "document",length = 50,nullable = false, unique = true)
     private String document;
     @Column(name = "cellphone",length = 50,nullable = false)
     private String cellphone;

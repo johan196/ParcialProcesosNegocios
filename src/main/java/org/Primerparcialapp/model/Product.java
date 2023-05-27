@@ -84,4 +84,12 @@ public class Product {
     public void setRating(Rating rating) {
         this.rating = rating;
     }
+
+    public User getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(User usuario) {
+        this.usuario = usuario;
+    }
 }
