@@ -9,12 +9,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
+import java.util.Collections;
 import java.util.Date;
+import java.util.function.Function;
 
 @Component
 public class JWTUtil {
@@ -29,8 +37,6 @@ public class JWTUtil {
    private Long ttlMillis;
 
     private final Logger log = LoggerFactory.getLogger(JWTUtil.class);
-
-
 
     public String create(String id, String subject) {
 
@@ -65,5 +71,56 @@ public class JWTUtil {
     public String getKey(String jwt) {
         Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key)).parseClaimsJws(jwt).getBody();
         return claims.getId();
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7); // El token comienza después de "Bearer "
+        }
+        return null;
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key)).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public Authentication getAuthentication(String token) {
+        Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key))
+                .parseClaimsJws(token).getBody();
+
+        String userId = claims.getId();
+        String username = claims.getSubject();
+
+        // Aquí puedes obtener más información del token según tus necesidades
+
+        // Crear un objeto de autenticación y devolverlo
+        return new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
+    }
+
+    public String getUsername(String token) {
+        return getClaim(token, Claims::getSubject);
+    }
+
+    public Date getExpirationDate(String token) {
+        return getClaim(token, Claims::getExpiration);
+    }
+
+    private <T> T getClaim(String token, Function<Claims, T> claimsResolver) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(key)
+                .parseClaimsJws(token)
+                .getBody();
+        return claimsResolver.apply(claims);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

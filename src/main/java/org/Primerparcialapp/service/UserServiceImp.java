@@ -5,6 +5,7 @@ import org.Primerparcialapp.model.User;
 import org.Primerparcialapp.repository.UserRepository;
 import org.Primerparcialapp.utils.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,8 +19,6 @@ public class UserServiceImp implements UserService {
     @Autowired
     private JWTUtil jwtUtil;
 
-
-
     public User getUserById(Long id){return userRepository.findById(id).get();}
 
 
@@ -28,8 +27,16 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public Boolean CreateUser(User user) {
+    public Boolean CreateUser(User user1) {
         try {
+            User user = user1;
+            user.setName(user.getName());
+            user.setLastname(user.getLastname());
+            user.setDocument(user.getDocument());
+            user.setCellphone(user.getCellphone());
+            user.setBirthday(user.getBirthday());
+            user.setMail(user.getMail());
+            user.setPassword(jwtUtil.passwordEncoder().encode(user.getPassword()));
             userRepository.save(user);
             return true;
         }catch (Exception e){
