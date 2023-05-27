@@ -41,14 +41,12 @@ public class UserController {
 
         boolean userResp = userService.CreateUser(user);
 
-        if(userResp){
+        if(userResp==true){
             apiResponse = new ApiResponse(Constants.REGISTER_CREATED,"");
             return new ResponseEntity(apiResponse, HttpStatus.CREATED);
-        }else {
-            apiResponse = new ApiResponse(Constants.REGISTER_BAD, user);
-            return new ResponseEntity(apiResponse, HttpStatus.BAD_REQUEST);
         }
-
+        apiResponse = new ApiResponse(Constants.REGISTER_BAD, user);
+        return new ResponseEntity(apiResponse,HttpStatus.BAD_REQUEST);
     }
     @GetMapping(value = "")
     public ResponseEntity findAllUser(){
@@ -59,17 +57,5 @@ public class UserController {
             apiResponse = new ApiResponse(Constants.REGISTER_NOT_FOUND,"");
             return new ResponseEntity<>(apiResponse,HttpStatus.NOT_FOUND);
         }
-    }
-
-    @PutMapping(value = "")
-    public ResponseEntity update(@RequestBody User user){
-        boolean userResp = userService.updateUser(user.getId(),user);
-
-        if(userResp==true){
-            apiResponse = new ApiResponse(Constants.REGISTER_UPDATED,"");
-            return new ResponseEntity(apiResponse, HttpStatus.OK);
-        }
-        apiResponse = new ApiResponse(Constants.REGISTER_BAD, user);
-        return new ResponseEntity(apiResponse,HttpStatus.BAD_REQUEST);
     }
 }
