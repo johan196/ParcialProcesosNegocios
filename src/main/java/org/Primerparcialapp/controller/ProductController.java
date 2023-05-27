@@ -16,7 +16,7 @@ public class ProductController {
 
     private final ProductService productService;
 
-    private Map response = new HashMap<>();
+    private final Map response = new HashMap<>();
 
     public ProductController(ProductService productService) {
         this.productService = productService;

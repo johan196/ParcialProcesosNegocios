@@ -19,7 +19,7 @@ public class AuthController {
     @Autowired
     private UserService userService;
     private ApiResponse apiResponse;
-    private Map data = new HashMap();
+    private final Map data = new HashMap();
 
     @PostMapping(value = "/login")
     public ResponseEntity login(@RequestBody User user){
