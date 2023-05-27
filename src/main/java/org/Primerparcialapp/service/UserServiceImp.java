@@ -5,7 +5,6 @@ import org.Primerparcialapp.model.User;
 import org.Primerparcialapp.repository.UserRepository;
 import org.Primerparcialapp.utils.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,8 +15,6 @@ public class UserServiceImp implements UserService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
     @Autowired
     private JWTUtil jwtUtil;
 
@@ -33,7 +30,6 @@ public class UserServiceImp implements UserService {
     @Override
     public Boolean CreateUser(User user) {
         try {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(user);
             return true;
         }catch (Exception e){
@@ -64,7 +60,7 @@ public class UserServiceImp implements UserService {
             throw new RuntimeException("Usuario no encontrado!");
         }
 
-        if(!passwordEncoder.matches(user.getPassword(), userBd.get().getPassword())){
+        if(!userBd.get().getPassword().equals(user.getPassword())){
             throw new RuntimeException("La contraseña es incorrecta!");
         }
         return jwtUtil.create(String.valueOf(userBd.get().getId()),
