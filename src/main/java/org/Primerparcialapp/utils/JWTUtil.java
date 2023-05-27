@@ -24,6 +24,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 import java.util.function.Function;
@@ -127,6 +128,10 @@ public class JWTUtil {
                 .parseClaimsJws(token)
                 .getBody();
         return claimsResolver.apply(claims);
+    }
+
+    public boolean checkPassword(String rawPassword, String encodedPassword) {
+        return passwordEncoder().matches(rawPassword, encodedPassword);
     }
 
     @Bean

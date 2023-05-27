@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ProductService {
 
-    List<Product> create();
+    List<Product> create(String bearerToken);
 
     Product getById(Long id);
 

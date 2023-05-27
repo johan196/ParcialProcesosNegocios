@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,6 +31,9 @@ public class User {
     private String mail;
     @Column(name="password")
     private String password;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private List<Product> products;
 
     public Long getId() {
         return id;

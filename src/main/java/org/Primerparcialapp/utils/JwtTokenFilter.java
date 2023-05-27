@@ -54,8 +54,6 @@ public class JwtTokenFilter extends BasicAuthenticationFilter {
                 objectMapper.writeValue(response.getWriter(), apiResponse);
                 return;
             }
-        }else{
-
         }
 
         chain.doFilter(request, response);
@@ -63,7 +61,7 @@ public class JwtTokenFilter extends BasicAuthenticationFilter {
 
     private boolean isExcludedEndpoint(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
-        String[] excludedEndpoints = new String[]{"/auth/login"};
+        String[] excludedEndpoints = new String[]{"/auth/login", "/user"};
         for (String endpoint : excludedEndpoints) {
             if (requestURI.startsWith(endpoint)) {
                 return true;

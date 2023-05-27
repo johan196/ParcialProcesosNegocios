@@ -4,6 +4,9 @@ import org.Primerparcialapp.model.User;
 import org.Primerparcialapp.service.UserService;
 import org.Primerparcialapp.utils.ApiResponse;
 import org.Primerparcialapp.utils.Constants;
+import org.Primerparcialapp.utils.JWTUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,11 @@ public class AuthController {
     private UserService userService;
     private ApiResponse apiResponse;
     private final Map data = new HashMap();
+
+    @Autowired
+    private JWTUtil jwtUtil;
+
+    private final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping(value = "/login")
     public ResponseEntity login(@RequestBody User user){

@@ -23,8 +23,8 @@ public class ProductController {
     }
 
     @PostMapping
-    public List<Product> createProducts() {
-        return this.productService.create();
+    public List<Product> createProducts(@RequestHeader("Authorization") String bearerToken) {
+        return this.productService.create(bearerToken);
     }
 
     @GetMapping(value = "/{id}")

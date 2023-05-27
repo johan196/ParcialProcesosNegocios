@@ -25,6 +25,10 @@ public class Product {
     @Column(name = "rating")
     private Rating rating;
 
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = true)
+    private User usuario;
+
     public Long getId() {
         return id;
     }
