@@ -11,4 +11,6 @@ public class Constants {
     public static final String USER_LOGIN = "Usuario logeado!";
     public static final String REGISTER_FOUND = "Registro encontrado!";
     public static final String REGISTER_LIST = "Lista de registros!";
+    public static final String NO_AUTORIZADO = "No Autorizado!";
+    public static final String NO_TOKEN = "Token Null!";
 }

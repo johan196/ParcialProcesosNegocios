@@ -5,12 +5,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.Primerparcialapp.repository.UserRepository;
+import org.Primerparcialapp.service.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -27,14 +31,17 @@ import java.util.function.Function;
 @Component
 public class JWTUtil {
 
-   @Value("${security.jwt.secret}")
-   private String key;
+    @Value("${security.jwt.secret}")
+    private String key;
 
-   @Value("${security.jwt.issuer}")
-   private String issuer;
+    @Value("${security.jwt.issuer}")
+    private String issuer;
 
-   @Value("${security.jwt.ttlMillis}")
-   private Long ttlMillis;
+    @Value("${security.jwt.ttlMillis}")
+    private Long ttlMillis;
+
+    @Autowired
+    private UserDetailsServiceImpl userRepository;
 
     private final Logger log = LoggerFactory.getLogger(JWTUtil.class);
 
@@ -91,16 +98,19 @@ public class JWTUtil {
     }
 
     public Authentication getAuthentication(String token) {
-        Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key))
-                .parseClaimsJws(token).getBody();
+        Claims claims = Jwts.parser()
+                .setSigningKey(DatatypeConverter.parseBase64Binary(key))
+                .parseClaimsJws(token)
+                .getBody();
 
-        String userId = claims.getId();
         String username = claims.getSubject();
 
-        // Aquí puedes obtener más información del token según tus necesidades
+        if (StringUtils.hasText(username)) {
+            UserDetails userDetails = userRepository.loadUserByUsername(username);
+            return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        }
 
-        // Crear un objeto de autenticación y devolverlo
-        return new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
+        return null;
     }
 
     public String getUsername(String token) {
@@ -113,7 +123,7 @@ public class JWTUtil {
 
     private <T> T getClaim(String token, Function<Claims, T> claimsResolver) {
         Claims claims = Jwts.parser()
-                .setSigningKey(key)
+                .setSigningKey(DatatypeConverter.parseBase64Binary(key))
                 .parseClaimsJws(token)
                 .getBody();
         return claimsResolver.apply(claims);

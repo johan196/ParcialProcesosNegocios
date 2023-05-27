@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -33,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/products/**").authenticated() // Endpoint personalizado a restringir
                 .anyRequest().permitAll() // Permitir el acceso a todos los demás endpoints
                 .and()
-                .apply(new JwtTokenFilterConfigurer(jwtUtil, userDetailsServicen,  authenticationManagerBean()));
+                .apply(new JwtTokenFilterConfigurer(jwtUtil, userDetailsService, authenticationManagerBean()));
     }
 
     @Override
@@ -46,4 +48,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
+    @Bean
+    public JwtTokenFilter jwtTokenFilter() throws Exception {
+        return new JwtTokenFilter(jwtUtil, userDetailsService, authenticationManagerBean());
+    }
+
 }
