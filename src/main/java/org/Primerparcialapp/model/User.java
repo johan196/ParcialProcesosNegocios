@@ -16,15 +16,15 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name ="name",length = 50,nullable = false)
+    @Column(name ="name",length = 50)
     private String name;
-    @Column(name = "lastname",length = 50,nullable = false)
+    @Column(name = "lastname",length = 50)
     private String lastname;
-    @Column(name = "document",length = 50,nullable = false)
+    @Column(name = "document",length = 50)
     private String document;
-    @Column(name = "cellphone",length = 50,nullable = false)
+    @Column(name = "cellphone",length = 50)
     private String cellphone;
-    @Column(name = "birthday",length = 10,nullable = false)
+    @Column(name = "birthday",length = 10)
     private String birthday;
     @Column(name = "mail")
     private String mail;

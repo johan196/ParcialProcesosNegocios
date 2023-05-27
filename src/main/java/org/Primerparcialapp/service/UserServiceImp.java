@@ -29,26 +29,38 @@ public class UserServiceImp implements UserService {
 
     @Override
     public Boolean CreateUser(User user) {
-        try {
-            userRepository.save(user);
-            return true;
-        }catch (Exception e){
-            return false;
+        Optional<User> userBd = userRepository.findByMail(user.getMail());
+        if(userBd.isEmpty()){
+            try {
+                User userBD=user;
+                userBD.setName(user.getName());
+                userBD.setLastname(user.getLastname());
+                userBD.setDocument(user.getDocument());
+                userBD.setCellphone(user.getCellphone());
+                userBD.setBirthday(user.getBirthday());
+                userBD.setMail(user.getMail());
+                userRepository.save(userBD);
+                return true;
+            }catch (Exception e){
+                return false;
+            }
         }
+        return false;
     }
 
     @Override
     public Boolean updateUser(Long id,User user){
+        Optional<User> userBd = userRepository.findById(id);
         try {
-
-            User userBD=userRepository.findById(id).get();
-        userBD.setName(user.getName());
-        userBD.setLastname(user.getLastname());
-        userBD.setDocument(user.getDocument());
-        userBD.setCellphone(user.getCellphone());
-        userBD.setBirthday(user.getBirthday());
-        User userUp=userRepository.save(userBD);
-        return true;
+            User userBD= userBd.get();
+            userBD.setName(user.getName());
+            userBD.setLastname(user.getLastname());
+            userBD.setDocument(user.getDocument());
+            userBD.setCellphone(user.getCellphone());
+            userBD.setBirthday(user.getBirthday());
+            userBD.setMail(user.getMail());
+            User userUp=userRepository.save(userBD);
+            return true;
     }catch (Exception e){
         return false;
     }
