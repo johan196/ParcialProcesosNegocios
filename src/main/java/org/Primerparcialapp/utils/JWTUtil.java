@@ -1,10 +1,8 @@
 package org.Primerparcialapp.utils;
 
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+import org.Primerparcialapp.model.User;
 import org.Primerparcialapp.repository.UserRepository;
 import org.Primerparcialapp.service.UserDetailsServiceImpl;
 import org.slf4j.Logger;
@@ -27,6 +25,7 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Component
@@ -87,6 +86,46 @@ public class JWTUtil {
             return bearerToken.substring(7); // El token comienza después de "Bearer "
         }
         return null;
+    }
+
+    public User getUserFromToken(String bearerToken) {
+        String token = extractToken(bearerToken);
+        String username = getUsernameFromToken(token);
+        User user = userRepository.loadUserByEmail(username);
+
+        if (user == null) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+        return user;
+    }
+
+    // Extraer el token de autorización del encabezado Bearer
+    private String extractToken(String bearerToken) {
+        if (bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        } else {
+            throw new IllegalArgumentException("Token de autorización inválido");
+        }
+    }
+
+    // Obtener el nombre de usuario del token
+    private String getUsernameFromToken(String token) {
+        Claims claims = parseToken(token);
+        return claims.getSubject();
+    }
+
+    // Analizar el token y validar su firma y fecha de expiración
+    private Claims parseToken(String token) {
+        try {
+            return Jwts.parser()
+                    .setSigningKey(DatatypeConverter.parseBase64Binary(key))
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            throw new RuntimeException("Token JWT expirado");
+        } catch (JwtException e) {
+            throw new RuntimeException("Token JWT inválido");
+        }
     }
 
     public boolean validateToken(String token) {

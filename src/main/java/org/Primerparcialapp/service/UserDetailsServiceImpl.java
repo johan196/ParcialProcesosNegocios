@@ -25,4 +25,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         return new org.springframework.security.core.userdetails.User(user.get().getMail(), user.get().getPassword(), new ArrayList<>());
     }
+
+    public User loadUserByEmail(String email) throws UsernameNotFoundException {
+        Optional<User> user = userRepository.findByMail(email);
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException("Usuario no encontrado");
+        }
+        return user.get();
+    }
 }

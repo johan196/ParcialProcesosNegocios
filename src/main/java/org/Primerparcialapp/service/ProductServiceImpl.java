@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,7 +37,7 @@ public class ProductServiceImpl extends AbstractClient  implements ProductServic
     private JWTUtil jwtUtil;
 
     @Override
-    public List<Product> create(String bearerToken) {
+    public List<Product> create(String bearerToken, Product product) {
         // Validar el token de autorización
         // Extraer el token de autorización sin el prefijo "Bearer "
         String token = bearerToken.substring(7);
@@ -59,21 +60,21 @@ public class ProductServiceImpl extends AbstractClient  implements ProductServic
             }
             //log.error("Error in user creation - httpStatus was: {}", response.getStatusCode());
             throw new RuntimeException("Error");
-        }else
-        {
-            // Obtener el usuario correspondiente al token de autorización
-            Optional<User> user = getUserFromToken(bearerToken);
-
-            // Crear un nuevo producto y establecer el usuario como propietario
-            Product newProduct = new Product();
-            newProduct.setUsuario(user.get());
-            // Establecer los demás atributos del producto si es necesario
-            productRepository.save(newProduct);
-
-            return getAll();
+        }else{
+            List<Product> listProducts = new ArrayList<>();
+            listProducts.add(createProduct(bearerToken, product));
+            return listProducts;
         }
     }
 
+    // Crear un nuevo producto y establecer el usuario como propietario
+    public Product createProduct(String bearerToken, Product newProduct) {
+        User user = jwtUtil.getUserFromToken(bearerToken);
+        newProduct.setUsuario(user);
+        // Establecer los demás atributos del producto si es necesario
+        this.productRepository.save(newProduct);
+        return newProduct;
+    }
 /*
  @Override
     public List<Product> create() {
@@ -146,7 +147,13 @@ public class ProductServiceImpl extends AbstractClient  implements ProductServic
     }
 
     @Override
-    public Product update(Long id, Product car) {
+    public Product update(Long id, Product car, String bearerToken) {
+        String token = bearerToken.substring(7);
+        if (bearerToken != null) {
+            if (StringUtils.hasText(token) && !validateToken(token)) {
+                throw new RuntimeException("Token de autorización inválido");
+            }
+        }
         Product car1 = productRepository.findById(id).get();
         car1.setTitle(car.getTitle());
         car1.setPrice(car.getPrice());

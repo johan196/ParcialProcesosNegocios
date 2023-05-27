@@ -1,9 +1,13 @@
 package org.Primerparcialapp.controller;
 
 import org.Primerparcialapp.model.Product;
+import org.Primerparcialapp.model.User;
 import org.Primerparcialapp.service.ProductService;
+import org.Primerparcialapp.utils.JWTUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -14,17 +18,22 @@ import java.util.Map;
 @RequestMapping("products")
 public class ProductController {
 
+    @Autowired
     private final ProductService productService;
 
     private final Map response = new HashMap<>();
+
+    @Autowired
+    JWTUtil jwtUtil;
 
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
     @PostMapping
-    public List<Product> createProducts(@RequestHeader("Authorization") String bearerToken) {
-        return this.productService.create(bearerToken);
+    public List<Product> createProducts(@RequestHeader("Authorization") String bearerToken, @Nullable @RequestBody Product product) {
+        List<Product> list = this.productService.create(bearerToken, product);
+        return list ;
     }
 
     @GetMapping(value = "/{id}")
@@ -50,13 +59,14 @@ public class ProductController {
     }
 
     @PutMapping
-    public ResponseEntity<?> createProducts(@RequestBody Product product) {
+    public ResponseEntity<?> createProducts(@RequestBody Product product, @RequestHeader("Authorization") String bearerToken) {
         try {
-            return new ResponseEntity<Product>(this.productService.update(product.getId(), product), HttpStatus.OK);
+            return new ResponseEntity<Product>(this.productService.update(product.getId(), product, bearerToken), HttpStatus.OK);
         } catch (Exception e) {
             response.put("mensaje", "No se encontro el id proporcionado");
             response.put("data", e.getMessage());
             return new ResponseEntity<Map>(response, HttpStatus.BAD_REQUEST);
         }
     }
+
 }
