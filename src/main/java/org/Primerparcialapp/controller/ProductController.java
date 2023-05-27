@@ -32,8 +32,7 @@ public class ProductController {
 
     @PostMapping
     public List<Product> createProducts(@RequestHeader("Authorization") String bearerToken, @Nullable @RequestBody Product product) {
-        List<Product> list = this.productService.create(bearerToken, product);
-        return list ;
+        return this.productService.create(bearerToken, product);
     }
 
     @GetMapping(value = "/{id}")

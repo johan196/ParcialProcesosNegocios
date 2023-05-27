@@ -70,9 +70,9 @@ public class ProductServiceImpl extends AbstractClient  implements ProductServic
     // Crear un nuevo producto y establecer el usuario como propietario
     public Product createProduct(String bearerToken, Product newProduct) {
         User user = jwtUtil.getUserFromToken(bearerToken);
-        newProduct.setUsuario(user);
+        newProduct.setUser(user);
         // Establecer los demás atributos del producto si es necesario
-        this.productRepository.save(newProduct);
+        newProduct =  this.productRepository.save(newProduct);
         return newProduct;
     }
 /*

@@ -4,9 +4,7 @@ package org.Primerparcialapp.service;
 import org.Primerparcialapp.model.User;
 import org.Primerparcialapp.repository.UserRepository;
 import org.Primerparcialapp.utils.JWTUtil;
-import org.Primerparcialapp.utils.SecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

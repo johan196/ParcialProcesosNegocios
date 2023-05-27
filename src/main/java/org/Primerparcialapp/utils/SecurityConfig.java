@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public JwtTokenFilter jwtTokenFilter() throws Exception {
-        return new JwtTokenFilter(jwtUtil, userDetailsService, authenticationManagerBean());
+        return new JwtTokenFilter(jwtUtil, authenticationManagerBean());
     }
 
 }

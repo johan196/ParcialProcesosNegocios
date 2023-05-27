@@ -29,10 +29,9 @@ public class JwtTokenFilter extends BasicAuthenticationFilter {
 
     private ApiResponse apiResponse;
 
-    public JwtTokenFilter(JWTUtil jwtTokenProvider, UserDetailsService userDetailsService, AuthenticationManager authenticationManager) {
+    public JwtTokenFilter(JWTUtil jwtTokenProvider, AuthenticationManager authenticationManager) {
         super(authenticationManager);
         this.jwtTokenProvider = jwtTokenProvider;
-        this.userDetailsService = userDetailsService;
     }
 
     @Override

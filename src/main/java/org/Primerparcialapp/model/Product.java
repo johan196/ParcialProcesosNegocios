@@ -1,5 +1,6 @@
 package org.Primerparcialapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import javax.persistence.*;
@@ -25,9 +26,15 @@ public class Product {
     @Column(name = "rating")
     private Rating rating;
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = true)
-    private User usuario;
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = true)
+    private User user;
+
+    @JsonProperty("user_id")
+    public Long getUserId() {
+        return (user != null) ? user.getId() : null;
+    }
 
     public Long getId() {
         return id;
@@ -85,11 +92,5 @@ public class Product {
         this.rating = rating;
     }
 
-    public User getUsuario() {
-        return usuario;
-    }
 
-    public void setUsuario(User usuario) {
-        this.usuario = usuario;
-    }
 }
