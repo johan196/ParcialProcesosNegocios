@@ -1,4 +1,4 @@
-const urlApi = "http://localhost:3001";
+const urlApi = "http://localhost:3000";
 
 async function login() {
     var myForm = document.getElementById("loginForm");
@@ -8,29 +8,32 @@ async function login() {
         jsonData[k] = v;
     }
 
-    titulo.textContent = 'Listado de Productos';
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', urlApi + "/products", true);
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.setRequestHeader('Content-Type', 'application/json');
+    const request = await fetch(urlApi + "/auth/login", {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(jsonData)
+    });
 
-    xhr.onload = async function() {
-        if (xhr.status == 200) {
+    const response = await request.json();
+    console.log(response.data.token);
+    console.log(request.status);
+    if (request.status === 200) {
+        localStorage.token = response.data.token;
 
-            const respuesta = await request.json();
-            localStorage.token = respuesta.data;
-
-            localStorage.email = jsonData.email;
-            location.href = "dashboard.html";
-        }
+        localStorage.email = jsonData.email;     
+        location.href= "dashboard.html";
     }
+
 }
 
 function listar() {
     const tablaSuperior = `
-        <table class="table">
-          <thead>
-          <tr>
+    <table class="table">
+      <thead>
+        <tr>
           <th scope="col">#</th>
           <th scope="col">First Name</th>
           <th scope="col">Last Name</th>
@@ -38,55 +41,52 @@ function listar() {
           <th scope="col">Address</th>
           <th scope="col">Birthday</th>
           <th scope="col">Action</th>
-          </tr>
-          </thead>
-          <tbody id="listar">
-      
-          </tbody>
-        </table>
-      `;
-    document.getElementById("table").innerHTML = tablaSuperior;
-    validaToken();
-    var settings = {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': localStorage.token
-        },
-    }
-    fetch(urlApi + "/user", settings)
-        .then(response => response.json())
-        .then(function(response) {
+        </tr>
+      </thead>
+      <tbody id="listar"></tbody>
+    </table>
+`;
 
-            var usuarios = '';
-            for (const usuario of response.data) {
-                console.log(usuario.email)
-                usuarios += `
-                <tr>
-                    <th scope="row">${usuario.id}</th>
-                    <td>${usuario.firstName}</td>
-                    <td>${usuario.lastName}</td>
-                    <td>${usuario.email}</td>
-                    <td>${usuario.address}</td>
-                    <td>${usuario.birthday}</td>
-                    <td>
-                    <button type="button" class="btn btn-outline-danger" 
-                    onclick="eliminaUsuario('${usuario.id}')">
-                        <i class="fa-solid fa-user-minus"></i>
-                    </button>
-                    <a href="#" onclick="verModificarUsuario('${usuario.id}')" class="btn btn-outline-warning">
-                        <i class="fa-solid fa-user-pen"></i>
-                    </a>
-                    <a href="#" onclick="verUsuario('${usuario.id}')" class="btn btn-outline-info">
-                        <i class="fa-solid fa-eye"></i>
-                    </a>
-                    </td>
-                </tr>`;
+        document.getElementById("table").innerHTML = tablaSuperior;
+        validaToken();
+        var settings = {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.token
+            },
+        };
 
-            }
-            document.getElementById("listar").innerHTML = usuarios;
-        })
+        fetch(urlApi + "/user", settings)
+            .then(response => response.json())
+            .then(function(response) {
+                var usuarios = '';
+                for (const usuario of response.data) {
+                    console.log(usuario.mail);
+                    usuarios += `
+                        <tr>
+                            <th scope="row">${usuario.id}</th>
+                            <td>${usuario.name}</td>
+                            <td>${usuario.lastname}</td>
+                            <td>${usuario.mail}</td>
+                            <td>${usuario.address}</td>
+                            <td>${usuario.birthday}</td>
+                            <td>
+                                <button type="button" class="btn btn-outline-danger" onclick="eliminaUsuario('${usuario.id}')">
+                                    <i class="fa-solid fa-user-minus"></i>
+                                </button>
+                                <a href="#" onclick="verModificarUsuario('${usuario.id}')" class="btn btn-outline-warning">
+                                    <i class="fa-solid fa-user-pen"></i>
+                                </a>
+                                <a href="#" onclick="verUsuario('${usuario.id}')" class="btn btn-outline-info">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>`;
+                }
+                document.getElementById("listar").innerHTML = usuarios;
+            });
 }
 
 

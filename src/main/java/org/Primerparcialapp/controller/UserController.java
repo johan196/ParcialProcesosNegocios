@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@CrossOrigin(origins = {"http://127.0.0.1:5500", "http://127.0.0.1:5500/dashboard"})
 @RestController
 @RequestMapping("/user")
 public class UserController {
