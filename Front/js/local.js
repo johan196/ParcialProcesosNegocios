@@ -1,32 +1,32 @@
-
 const urlApi = "http://localhost:3001";
 
-async function login(){
+async function login() {
     var myForm = document.getElementById("loginForm");
     var formData = new FormData(myForm);
     var jsonData = {};
-    for(var [k, v] of formData){
+    for (var [k, v] of formData) {
         jsonData[k] = v;
     }
 
-     titulo.textContent = 'Listado de Productos';
-     var xhr = new XMLHttpRequest();
-     xhr.open('GET', urlApi + "/products", true);
-     xhr.setRequestHeader('Accept', 'application/json');
-     xhr.setRequestHeader('Content-Type', 'application/json');
-     
-     xhr.onload = async function() {
-       if (xhr.status == 200) {
+    titulo.textContent = 'Listado de Productos';
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', urlApi + "/products", true);
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.setRequestHeader('Content-Type', 'application/json');
 
-        const respuesta = await request.json();
-        localStorage.token = respuesta.data;
+    xhr.onload = async function() {
+        if (xhr.status == 200) {
 
-        localStorage.email = jsonData.email;     
-        location.href= "dashboard.html";
-       }}
+            const respuesta = await request.json();
+            localStorage.token = respuesta.data;
+
+            localStorage.email = jsonData.email;
+            location.href = "dashboard.html";
+        }
+    }
 }
 
-function listar(){
+function listar() {
     const tablaSuperior = `
         <table class="table">
           <thead>
@@ -45,22 +45,22 @@ function listar(){
           </tbody>
         </table>
       `;
-      document.getElementById("table").innerHTML = tablaSuperior;
+    document.getElementById("table").innerHTML = tablaSuperior;
     validaToken();
-    var settings={
+    var settings = {
         method: 'GET',
-        headers:{
+        headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'Authorization': localStorage.token
         },
     }
-    fetch(urlApi+"/user",settings)
-    .then(response => response.json())
-    .then(function(response){
-        
+    fetch(urlApi + "/user", settings)
+        .then(response => response.json())
+        .then(function(response) {
+
             var usuarios = '';
-            for(const usuario of response.data){
+            for (const usuario of response.data) {
                 console.log(usuario.email)
                 usuarios += `
                 <tr>
@@ -83,14 +83,14 @@ function listar(){
                     </a>
                     </td>
                 </tr>`;
-                
+
             }
             document.getElementById("listar").innerHTML = usuarios;
-    })
+        })
 }
 
 
-function listar2(){
+function listar2() {
     validaToken();
     var titulo = document.getElementById('listadosTitle');
 
@@ -100,13 +100,13 @@ function listar2(){
     xhr.setRequestHeader('Accept', 'application/json');
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('Authorization', localStorage.token);
-    
-    xhr.onload = function() {
-      if (xhr.status >= 200 && xhr.status < 400) {
-        var response = JSON.parse(xhr.responseText);
-        console.log(response)
 
-        const tablaSuperior = `
+    xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 400) {
+            var response = JSON.parse(xhr.responseText);
+            console.log(response)
+
+            const tablaSuperior = `
         <table class="table">
           <thead>
           <tr>
@@ -125,12 +125,12 @@ function listar2(){
           </tbody>
         </table>
       `;
-      document.getElementById("table").innerHTML = tablaSuperior;
+            document.getElementById("table").innerHTML = tablaSuperior;
 
-        let productos = '';
+            let productos = '';
 
-        for (const producto of response.data) {
-        productos += `
+            for (const producto of response.data) {
+                productos += `
             <tr>
             <th scope="row">${producto.id}</th>
             <td>${producto.title}</td>
@@ -152,59 +152,57 @@ function listar2(){
                 </a>
             </td>
             </tr>`;
-        }
-        document.getElementById("listar").innerHTML = productos;
+            }
+            document.getElementById("listar").innerHTML = productos;
 
-        var elemento = document.querySelector('.btn-outline-success');
+            var elemento = document.querySelector('.btn-outline-success');
 
-        elemento.addEventListener('click', registerForm2);
+            elemento.addEventListener('click', registerForm2);
 
 
-      } else {
-      }
+        } else {}
     };
-    
-    xhr.onerror = function() {
-    };
-    
+
+    xhr.onerror = function() {};
+
     xhr.send();
 }
 
 
-function eliminaUsuario(id){
+function eliminaUsuario(id) {
     validaToken();
-    var settings={
+    var settings = {
         method: 'DELETE',
-        headers:{
+        headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'Authorization': localStorage.token
         },
     }
-    fetch(urlApi+"/user/"+id,settings)
-    .then(response => response.json())
-    .then(function(data){
-        listar();
-        alertas("Se ha eliminado el usuario exitosamente!",2)
-    })
+    fetch(urlApi + "/user/" + id, settings)
+        .then(response => response.json())
+        .then(function(data) {
+            listar();
+            alertas("Se ha eliminado el usuario exitosamente!", 2)
+        })
 }
 
-function verModificarUsuario(id){
+function verModificarUsuario(id) {
     validaToken();
-    var settings={
+    var settings = {
         method: 'GET',
-        headers:{
+        headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'Authorization': localStorage.token
         },
     }
-    fetch(urlApi+"/user/"+id,settings)
-    .then(response => response.json())
-    .then(function(response){
-            var cadena='';
+    fetch(urlApi + "/user/" + id, settings)
+        .then(response => response.json())
+        .then(function(response) {
+            var cadena = '';
             const usuario = response.data;
-            if(usuario){                
+            if (usuario) {
                 cadena = `
                 <div class="p-3 mb-2 bg-light text-dark">
                     <h1 class="display-5"><i class="fa-solid fa-user-pen"></i> Modificar Usuario</h1>
@@ -238,20 +236,20 @@ function verModificarUsuario(id){
             document.getElementById("contentModal").innerHTML = cadena;
             var myModal = new bootstrap.Modal(document.getElementById('modalUsuario'))
             myModal.toggle();
-    })
+        })
 }
 
-async function modificarUsuario(id){
+async function modificarUsuario(id) {
     validaToken();
     var myForm = document.getElementById("updateForm");
     var formData = new FormData(myForm);
     var jsonData = {};
-    for(var [k, v] of formData){
+    for (var [k, v] of formData) {
         jsonData[k] = v;
     }
-    const request = await fetch(urlApi+"/user/"+id, {
+    const request = await fetch(urlApi + "/user/" + id, {
         method: 'PUT',
-        headers:{
+        headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'Authorization': localStorage.token
@@ -259,29 +257,29 @@ async function modificarUsuario(id){
         body: JSON.stringify(jsonData)
     });
     listar();
-    alertas("Se ha modificado el usuario exitosamente!",1)
+    alertas("Se ha modificado el usuario exitosamente!", 1)
     document.getElementById("contentModal").innerHTML = '';
     var myModalEl = document.getElementById('modalUsuario')
     var modal = bootstrap.Modal.getInstance(myModalEl)
     modal.hide();
 }
 
-function verUsuario(id){
+function verUsuario(id) {
     validaToken();
-    var settings={
+    var settings = {
         method: 'GET',
-        headers:{
+        headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'Authorization': localStorage.token
         },
     }
-    fetch(urlApi+"/user/"+id,settings)
-    .then(response => response.json())
-    .then(function(response){
-            var cadena='';
+    fetch(urlApi + "/user/" + id, settings)
+        .then(response => response.json())
+        .then(function(response) {
+            var cadena = '';
             const usuario = response.data;
-            if(usuario){                
+            if (usuario) {
                 cadena = `
                 <div class="p-3 mb-2 bg-light text-dark">
                     <h1 class="display-5"><i class="fa-solid fa-user-pen"></i> Visualizar Usuario</h1>
@@ -293,23 +291,22 @@ function verUsuario(id){
                     <li class="list-group-item">Direccion: ${usuario.address}</li>
                     <li class="list-group-item">Fecha: ${usuario.birthday}</li>
                 </ul>`;
-              
+
             }
             document.getElementById("contentModal").innerHTML = cadena;
             var myModal = new bootstrap.Modal(document.getElementById('modalUsuario'))
             myModal.toggle();
-    })
+        })
 }
 
-function alertas(mensaje,tipo){
-    var color ="";
-    if(tipo == 1){
-        color="success"
-    }
-    else{
+function alertas(mensaje, tipo) {
+    var color = "";
+    if (tipo == 1) {
+        color = "success"
+    } else {
         color = "danger"
     }
-    var alerta =`<div class="alert alert-${color} alert-dismissible fade show" role="alert">
+    var alerta = `<div class="alert alert-${color} alert-dismissible fade show" role="alert">
                     <strong><i class="fa-solid fa-triangle-exclamation"></i></strong>
                         ${mensaje}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -317,7 +314,7 @@ function alertas(mensaje,tipo){
     document.getElementById("datos").innerHTML = alerta;
 }
 
-function registerForm(){
+function registerForm() {
     cadena = `
             <div class="p-3 mb-2 bg-light text-dark">
                 <h1 class="display-5"><i class="fa-solid fa-user-pen"></i> Registrar Usuario</h1>
@@ -345,35 +342,35 @@ function registerForm(){
                 <input type="password" class="form-control" id="password" name="password" required> <br>
                 <button type="button" class="btn btn-outline-info" onclick="registrarUsuario()">Registrar</button>
             </form>`;
-            document.getElementById("contentModal").innerHTML = cadena;
-            var myModal = new bootstrap.Modal(document.getElementById('modalUsuario'))
-            myModal.toggle();
+    document.getElementById("contentModal").innerHTML = cadena;
+    var myModal = new bootstrap.Modal(document.getElementById('modalUsuario'))
+    myModal.toggle();
 }
 
-async function registrarUsuario(){
+async function registrarUsuario() {
     var myForm = document.getElementById("myForm");
     var formData = new FormData(myForm);
     var jsonData = {};
-    for(var [k, v] of formData){
+    for (var [k, v] of formData) {
         jsonData[k] = v;
     }
-    const request = await fetch(urlApi+"/user", {
+    const request = await fetch(urlApi + "/user", {
         method: 'POST',
-        headers:{
+        headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(jsonData)
     });
     listar();
-    alertas("Se ha registrado el usuario exitosamente!",1)
+    alertas("Se ha registrado el usuario exitosamente!", 1)
     document.getElementById("contentModal").innerHTML = '';
     var myModalEl = document.getElementById('modalUsuario')
     var modal = bootstrap.Modal.getInstance(myModalEl)
     modal.hide();
 }
 
-function modalConfirmacion(texto,funcion){
+function modalConfirmacion(texto, funcion) {
     document.getElementById("contenidoConfirmacion").innerHTML = texto;
     var myModal = new bootstrap.Modal(document.getElementById('modalConfirmacion'))
     myModal.toggle();
@@ -381,13 +378,13 @@ function modalConfirmacion(texto,funcion){
     confirmar.onclick = funcion;
 }
 
-function salir(){
+function salir() {
     localStorage.clear();
     location.href = "index.html";
 }
 
-function validaToken(){
-    if(localStorage.token == undefined){
+function validaToken() {
+    if (localStorage.token == undefined) {
         salir();
     }
 }
@@ -400,11 +397,11 @@ function verModificarProducto(id) {
     xhr.setRequestHeader('Accept', 'application/json');
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('Authorization', localStorage.token);
-    
+
     xhr.onload = function() {
-      if (xhr.status >= 200 && xhr.status < 400) {
-        var response = JSON.parse(xhr.responseText);
-        console.log(response)
+        if (xhr.status >= 200 && xhr.status < 400) {
+            var response = JSON.parse(xhr.responseText);
+            console.log(response)
             var cadena = '';
             const producto = response.data;
             if (producto) {
@@ -439,11 +436,12 @@ function verModificarProducto(id) {
 
                     <button type="button" class="btn btn-outline-warning" onclick="modificarProducto('${producto.id}')">Modificar</button>
                 </form>`;
-                 document.getElementById("contentModal2").innerHTML = cadena;
-                 var myModal = new bootstrap.Modal(document.getElementById('modalProducts'));
-                 //myModal.toggle();
+                document.getElementById("contentModal2").innerHTML = cadena;
+                var myModal = new bootstrap.Modal(document.getElementById('modalProducts'));
+                //myModal.toggle();
             }
-        }};
+        }
+    };
 }
 
 async function modificarProducto(id) {
@@ -509,7 +507,7 @@ function verProducto(id) {
 }
 
 function registerForm2() {
-    
+
     var titulo = document.getElementById('listadosTitle');
 
 
@@ -558,37 +556,37 @@ function registerForm2() {
     }
 }
 
-async function registrarProducto(){
+async function registrarProducto() {
     var myForm = document.getElementById("myForm");
     var formData = new FormData(myForm);
     var jsonData = {};
-    for(var [k, v] of formData){
+    for (var [k, v] of formData) {
         jsonData[k] = v;
     }
-   
 
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', urlApi + "/products", true);
-      xhr.setRequestHeader('Accept', 'application/json');
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.setRequestHeader('Authorization', localStorage.token);
-      
-      xhr.onload = function() {
-          if (xhr.status >= 200 && xhr.status < 400) {
-              var response = JSON.parse(xhr.responseText);
-                listar();
-                alertas("Se ha registrado el producto exitosamente!", 1);
-                document.getElementById("contentModal").innerHTML = '';
-                var myModalEl = document.getElementById('modalProducto');
-                var modal = bootstrap.Modal.getInstance(myModalEl); 
-                modal.hide();
-              console.log(response);
-          } else {
 
-              console.error('Error al obtener la lista de productos');
-          }
-      };
-      
-      xhr.send(JSON.stringify(jsonData));
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', urlApi + "/products", true);
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('Authorization', localStorage.token);
+
+    xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 400) {
+            var response = JSON.parse(xhr.responseText);
+            listar();
+            alertas("Se ha registrado el producto exitosamente!", 1);
+            document.getElementById("contentModal").innerHTML = '';
+            var myModalEl = document.getElementById('modalProducto');
+            var modal = bootstrap.Modal.getInstance(myModalEl);
+            modal.hide();
+            console.log(response);
+        } else {
+
+            console.error('Error al obtener la lista de productos');
+        }
+    };
+
+    xhr.send(JSON.stringify(jsonData));
 
 }
