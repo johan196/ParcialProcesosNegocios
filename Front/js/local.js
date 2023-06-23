@@ -70,7 +70,7 @@ function listar() {
                             <td>${usuario.name}</td>
                             <td>${usuario.lastname}</td>
                             <td>${usuario.mail}</td>
-                            <td>${usuario.address}</td>
+                            <td>${usuario.cellphone}</td>
                             <td>${usuario.birthday}</td>
                             <td>
                                 <button type="button" class="btn btn-outline-danger" onclick="eliminaUsuario('${usuario.id}')">
